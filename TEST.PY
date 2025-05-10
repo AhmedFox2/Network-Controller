@@ -1,5 +1,5 @@
 import customtkinter as ct
-from ctk_widget.ctk_widget import CTkMeter
+from ctk_widget import CTkMeter
 
 root = ct.CTk()
 ct.set_appearance_mode("White")
@@ -19,6 +19,6 @@ meter.set(360)  # Value must be between 0 and 360
 
 meter.textvariable.set(f'{int((meter.arcvariable.get() / 360) * 100)}%')  # To set the text
 
-slider = ct.CTkSlider(root, from_=0, to=360, number_of_steps=100, width=245, command=lambda value: change_it(value))
+slider = ct.CTkSlider(root, from_=0, to=2000, number_of_steps=100, width=245, command=lambda value: change_it(value))
 slider.pack(anchor="center")
 root.mainloop()
