@@ -1,0 +1,3 @@
+[submodule "ctk_widget"]
+	path = ctk_widget
+	url = https://github.com/anamite/ctk_widget.git
