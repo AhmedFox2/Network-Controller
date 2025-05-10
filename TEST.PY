@@ -1,60 +1,24 @@
-import json
-import psutil
-import tkinter as tk
-import ttkbootstrap as ttk
+import customtkinter as ct
+from ctk_widget.ctk_widget import CTkMeter
 
-# إجمالي سعة الإنترنت المتاحة (بالجيجابايت)
-TOTAL_GB = 250
+root = ct.CTk()
+ct.set_appearance_mode("White")
+root.minsize(height=500, width=550)
+root.configure(bg_color='#fafafa')
 
-# ملف لحفظ الاستخدام
-json_file = "internet_usage.json"
 
-# تحميل البيانات من الملف إذا كانت موجودة
-def load_data():
-    try:
-        with open(json_file, "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return {"gb_sent": 0, "gb_received": 0, "gb_total_used": 0}
+# Function for testing command
+def change_it(value):
+    meter.set(value)
+    meter.textvariable.set(f'{int((value / 360) * 100)}%')  # To set the text
 
-# حفظ البيانات في الملف
-def save_data(data):
-    with open(json_file, "w") as f:
-        json.dump(data, f, indent=4)
+meter = CTkMeter(root,padding=19, background='#242424',foreground='#ffffff', troughcolor='#b6b6de', font='Calibri 14 bold',indicatorcolor='#0f1273')
+meter.pack(pady=5)
 
-# تحديث استخدام الإنترنت
-def update_usage():
-    net_io = psutil.net_io_counters()
-    
-    # تحويل البيانات إلى جيجابايت
-    data["gb_sent"] = net_io.bytes_sent / (1024 ** 3)
-    data["gb_received"] = net_io.bytes_recv / (1024 ** 3)
-    data["gb_total_used"] = data["gb_sent"] + data["gb_received"]
-    
-    save_data(data)
-    update_meter()
+meter.set(360)  # Value must be between 0 and 360
 
-# تحديث meter في الواجهة
-def update_meter():
-    remaining_gb = max(0, TOTAL_GB - data["gb_total_used"])
+meter.textvariable.set(f'{int((meter.arcvariable.get() / 360) * 100)}%')  # To set the text
 
-    meter['amountused'] = data["gb_total_used"]
-    meter.configure(subtext=f"Remaining: {remaining_gb:.2f} GB")
-    
-    root.after(1000, update_usage)  # تحديث كل ثانية
-
-# تحميل البيانات الأولية
-data = load_data()
-
-# إنشاء الواجهة
-root = ttk.Window(themename="solar")
-root.title("مراقبة استخدام الإنترنت")
-root.geometry("400x400")
-
-meter = ttk.Meter(root, metersize=280, amountused=data["gb_total_used"], amounttotal=TOTAL_GB, subtext=f"Remaining: {TOTAL_GB - data["gb_total_used"]} GB", interactive=False, stripethickness=10)
-meter.pack(pady=55)
-
-# بدء التحديث
-#update_usage()
-
+slider = ct.CTkSlider(root, from_=0, to=360, number_of_steps=100, width=245, command=lambda value: change_it(value))
+slider.pack(anchor="center")
 root.mainloop()
